@@ -1,0 +1,6 @@
+.git
+darwin_*
+linux_*
+windows_*
+bin
+.env
