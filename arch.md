@@ -76,7 +76,3 @@ The query service depends on a read-only storage interface, separate from ingest
 `GET /rockets/{channel}` returns the current snapshot, or 404 for an unknown channel or a channel awaiting launch. `GET /rockets` includes only initialized rockets and supports sorting by channel, type, speed, or mission, ascending or descending. Channel ascending breaks ties. Default pagination uses limit 100 and offset 0, with a maximum limit of 1000. Invalid query parameters return 400. List responses contain rockets, limit, and offset; no separate total-count query is performed.
 
 Both endpoints expose last applied message number/time, pending message count, and whether known gaps exist. Pending count is computed using the event table's composite primary key. Offset pagination and database sorting keep the initial design simple; independent pages can shift during concurrent updates and large offsets or frequent sorts may require optimization at scale. No additional sort indexes are introduced without measured need.
-
-## Verification
-
-Cover duplicate delivery, shuffled delivery, gap closure, simultaneous requests for one rocket, and recovery after restarting with pending events. Verify transaction failures cannot leave a partially advanced snapshot or lose an acknowledged event. Verify applied events remain in the history and replay produces the same snapshot.

@@ -94,18 +94,9 @@ DATABASE_URL='postgres://rockets:rockets@localhost:5432/rockets?sslmode=disable'
 
 Add sequentially numbered SQL pairs under `migrations/`. The initial baseline initializes migration tracking; migration 000002 creates rocket snapshots and retained event history. Migrations run separately from the application, using the pinned golang-migrate CLI image.
 
-## Verification
+## Build checks
 
 ```sh
-go test ./...
 go vet ./...
 go build ./cmd/rockets
 ```
-
-The default suite checks HTTP payload decoding, error responses, and health behavior. Core ingestion and read behavior is verified against real PostgreSQL, without a simulated transaction implementation. These integration tests are skipped unless `TEST_DATABASE_URL` is set:
-
-```sh
-TEST_DATABASE_URL='postgres://rockets:rockets@localhost:5432/rockets?sslmode=disable' go test -race ./...
-```
-
-The database user must be able to create schemas. Tests create and remove an isolated schema without changing application tables. They execute migration SQL up/down directly and cover shuffled delivery, persistence across separate connection pools, timestamp precision, duplicate delivery, concurrent ingestion, and transaction rollback. Compose's golang-migrate startup remains a separate environment check.
